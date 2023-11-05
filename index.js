@@ -28,12 +28,23 @@ async function run() {
 
         const userCollection = client.db("RedChiliRestaurent").collection("users");
         const foodCollection = client.db("RedChiliRestaurent").collection("addFood");
+        const orderCollection = client.db("RedChiliRestaurent").collection("order");
 
 
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
         // USER ADD
+
+        app.get('/user', async (req, res) => {
+            let query = {};
+            if(req.query?.email) {
+                query = {email: req.query.email }
+            }
+            const result = await userCollection.find(query).toArray()
+            res.send(result)
+        })
+        
         app.post('/users', async (req, res) => {
             const user = req.body;
             const result = await userCollection.insertOne(user)
@@ -52,7 +63,7 @@ async function run() {
         app.get('/addfood', async (req, res) => {
             let query = {};
             if(req.query?.email) {
-                query = { email: req.query.email }
+                query = {email: req.query.email }
             }
             const result = await foodCollection.find(query).toArray()
             res.send(result)
@@ -87,6 +98,22 @@ async function run() {
             res.send(result)
         })
 
+        // FOOD ORDER
+
+        app.get('/foodOrder', async(req, res) => {
+            let query = {}
+            if(req.query?.email){
+                query = {email: req.query.email}
+            }
+            const result = await orderCollection.find(query).toArray()
+            res.send(result)
+        })
+
+        app.post('/foodOrder', async(req, res) => {
+            const body = req.body;
+            const result = await orderCollection.insertOne(body);
+            res.send(result)
+        })
 
 
         // Send a ping to confirm a successful connection
