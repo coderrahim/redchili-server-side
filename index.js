@@ -60,6 +60,17 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/addfood', async(req, res) => {
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
+
+            const result = await foodCollection.find()
+            .skip(page * size)
+            .limit(size)
+            .toArray()
+            res.send(result)
+        })
+
         app.get('/addfood', async (req, res) => {
             let query = {};
             if(req.query?.email) {
@@ -67,6 +78,11 @@ async function run() {
             }
             const result = await foodCollection.find(query).toArray()
             res.send(result)
+        })
+
+        app.get('/totalFood', async(req, res) => {
+            const count = await foodCollection.estimatedDocumentCount();
+            res.send({count})
         })
 
         app.post('/addfood', async (req, res) => {
